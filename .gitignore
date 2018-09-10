@@ -1,0 +1,12 @@
+.gradle
+.idea
+build
+out
+klog-server.iml
+target
+.DS_Store
+.vscode/
+.settings
+bin/
+.classpath
+.project
