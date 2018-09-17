@@ -25,10 +25,9 @@ public class MySQLConnection {
             if (dbSecret == null) {
                 throw new InternalServerErrorException("Get secrets failed");
             } else {
-                String url = dbSecret.getHost();
+                String url = "jdbc:mysql://" + dbSecret.getHost();
                 String user = dbSecret.getUsername();
                 String password = dbSecret.getPassword();
-
                 return DriverManager.getConnection(url, user, password);
             }
         } catch (Exception e) {
