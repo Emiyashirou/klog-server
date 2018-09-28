@@ -4,7 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.klog.exception.BadRequestException;
 import com.klog.exception.InternalServerErrorException;
-import com.klog.model.basic.Comment;
+import com.klog.model.basic.Work;
 import org.apache.commons.dbutils.DbUtils;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -17,19 +17,19 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.klog.connection.MySQLConnection.connect;
-import static com.klog.utils.CommentUtils.getStatusOfOpen;
-import static com.klog.utils.CommentUtils.isValidComment;
+import static com.klog.utils.WorkUtils.getStatusOfActive;
+import static com.klog.utils.WorkUtils.isValidWork;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.table;
 
-public class AddComment implements RequestHandler<Comment, Object> {
+public class AddWork implements RequestHandler<Work, Object> {
 
-    public Map<String, Object> handleRequest(Comment input, Context context) {
+    public Map<String, Object> handleRequest(Work input, Context context) {
 
         System.getProperties().setProperty("org.jooq.no-logo", "true");
 
-        if(!isValidComment(input)){
-            throw new BadRequestException("Invalid comment");
+        if(!isValidWork(input)){
+            throw new BadRequestException("Invalid work");
         }
 
         Connection conn = null;
@@ -41,22 +41,22 @@ public class AddComment implements RequestHandler<Comment, Object> {
             String id = UUID.randomUUID().toString();
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-            dslContext.insertInto(table("klog.comment")).columns(
+            dslContext.insertInto(table("klog.work")).columns(
                     field("id"),
-                    field("author"),
+                    field("title"),
                     field("create_date"),
                     field("modify_date"),
-                    field("ref"),
+                    field("priority"),
                     field("status"),
-                    field("content"))
+                    field("description"))
                     .values(
                             id,
-                            input.getAuthor(),
+                            input.getTitle(),
                             timestamp,
                             null,
-                            input.getRef(),
-                            getStatusOfOpen(),
-                            input.getContent())
+                            input.getPriority(),
+                            getStatusOfActive(),
+                            input.getDescription())
                     .execute();
 
             input.setId(id);

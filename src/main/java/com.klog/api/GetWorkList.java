@@ -3,8 +3,8 @@ package com.klog.api;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.klog.exception.InternalServerErrorException;
-import com.klog.model.basic.Post;
-import com.klog.model.input.GetPostListInput;
+import com.klog.model.basic.Work;
+import com.klog.model.input.GetWorkListInput;
 import org.apache.commons.dbutils.DbUtils;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -12,18 +12,15 @@ import org.jooq.impl.DSL;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.klog.connection.MySQLConnection.connect;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.table;
 
-public class GetPostList implements RequestHandler<GetPostListInput, Object> {
+public class GetWorkList implements RequestHandler<GetWorkListInput, Object> {
 
-    public Map<String, Object> handleRequest(GetPostListInput input, Context context) {
+    public Map<String, Object> handleRequest(GetWorkListInput input, Context context) {
 
         System.getProperties().setProperty("org.jooq.no-logo", "true");
 
@@ -42,23 +39,23 @@ public class GetPostList implements RequestHandler<GetPostListInput, Object> {
                     field("modify_date"),
                     field("status"),
                     field("priority"),
-                    field("content"))
-                    .from(table("klog.post"))
+                    field("description"))
+                    .from(table("klog.work"))
                     .where(field("status").eq(0))
                     .fetchResultSet();
-            List<Post> posts = new ArrayList<>();
+            List<Work> works = new ArrayList<>();
             while (rs.next()) {
-                posts.add(new Post(
+                works.add(new Work(
                         rs.getString("id"),
                         rs.getString("title"),
                         rs.getDate("create_date"),
                         rs.getDate("modify_date"),
                         rs.getInt("status"),
                         rs.getInt("priority"),
-                        rs.getString("content")
+                        rs.getString("description")
                 ));
             }
-            result.put("data", posts);
+            result.put("data", works);
             return result;
         } catch (Exception e) {
             throw new InternalServerErrorException(e.getMessage());
@@ -67,5 +64,5 @@ public class GetPostList implements RequestHandler<GetPostListInput, Object> {
             DbUtils.closeQuietly(conn);
         }
     }
-}
 
+}
