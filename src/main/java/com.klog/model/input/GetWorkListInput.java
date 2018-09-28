@@ -1,4 +1,4 @@
 package com.klog.model.input;
 
-public class GetPostInput {
+public class GetWorkListInput {
 }

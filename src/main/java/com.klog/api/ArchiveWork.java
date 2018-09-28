@@ -5,7 +5,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.klog.exception.BadRequestException;
 import com.klog.exception.InternalServerErrorException;
 import com.klog.exception.NotFoundException;
-import com.klog.model.basic.Post;
+import com.klog.model.basic.Work;
 import org.apache.commons.dbutils.DbUtils;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -18,18 +18,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.klog.connection.MySQLConnection.connect;
-import static com.klog.utils.PostUtils.isValidPostEdit;
+import static com.klog.utils.WorkUtils.getStatusOfArchive;
+import static com.klog.utils.WorkUtils.isValidArchiveWork;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.table;
 
-public class EditPost implements RequestHandler<Post, Object> {
+public class ArchiveWork implements RequestHandler<Work, Object> {
 
-    public Map<String, Object> handleRequest(Post input, Context context) {
+    public Map<String, Object> handleRequest(Work input, Context context) {
 
         System.getProperties().setProperty("org.jooq.no-logo", "true");
 
-        if(!isValidPostEdit(input)){
-            throw new BadRequestException("Invalid post");
+        if(!isValidArchiveWork(input)){
+            throw new BadRequestException("Invalid archive work input");
         }
 
         Connection conn = null;
@@ -41,20 +42,19 @@ public class EditPost implements RequestHandler<Post, Object> {
             DSLContext dslContext = DSL.using(conn, SQLDialect.MYSQL_8_0);
 
             rs = dslContext.select(field("id"))
-                    .from(table("klog.post"))
+                    .from(table("klog.work"))
                     .where(field("id").eq(input.getId()))
                     .fetchResultSet();
 
             if(!rs.next()){
-                throw new NotFoundException("Post not found");
+                throw new NotFoundException("Work not found");
             }
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-            dslContext.update(table("klog.post"))
+            dslContext.update(table("klog.work"))
                     .set(field("modify_date"), timestamp)
-                    .set(field("status"), input.getStatus())
-                    .set(field("content"), input.getContent())
+                    .set(field("status"), getStatusOfArchive())
                     .where(field("id").eq(input.getId()))
                     .execute();
 
@@ -70,6 +70,7 @@ public class EditPost implements RequestHandler<Post, Object> {
             DbUtils.closeQuietly(rs);
             DbUtils.closeQuietly(conn);
         }
+
     }
 
 }

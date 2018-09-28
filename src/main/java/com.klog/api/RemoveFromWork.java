@@ -5,7 +5,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.klog.exception.BadRequestException;
 import com.klog.exception.InternalServerErrorException;
 import com.klog.exception.NotFoundException;
-import com.klog.model.basic.Post;
+import com.klog.model.input.RemoveFromWorkInput;
 import org.apache.commons.dbutils.DbUtils;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -13,23 +13,22 @@ import org.jooq.impl.DSL;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.klog.connection.MySQLConnection.connect;
-import static com.klog.utils.PostUtils.isValidPostEdit;
+import static com.klog.utils.WorkUtils.isValidRemoveFromWork;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.table;
 
-public class EditPost implements RequestHandler<Post, Object> {
+public class RemoveFromWork implements RequestHandler<RemoveFromWorkInput, Object> {
 
-    public Map<String, Object> handleRequest(Post input, Context context) {
+    public Map<String, Object> handleRequest(RemoveFromWorkInput input, Context context){
 
         System.getProperties().setProperty("org.jooq.no-logo", "true");
 
-        if(!isValidPostEdit(input)){
-            throw new BadRequestException("Invalid post");
+        if(!isValidRemoveFromWork(input)){
+            throw new BadRequestException("Invalid remove from work input");
         }
 
         Connection conn = null;
@@ -41,25 +40,31 @@ public class EditPost implements RequestHandler<Post, Object> {
             DSLContext dslContext = DSL.using(conn, SQLDialect.MYSQL_8_0);
 
             rs = dslContext.select(field("id"))
+                    .from(table("klog.work"))
+                    .where(field("id").eq(input.getWorkId()))
+                    .fetchResultSet();
+
+            if(!rs.next()){
+                throw new NotFoundException("Work not found");
+            }
+
+            rs = dslContext.select(field("id"))
                     .from(table("klog.post"))
-                    .where(field("id").eq(input.getId()))
+                    .where(field("id").eq(input.getPostId()))
                     .fetchResultSet();
 
             if(!rs.next()){
                 throw new NotFoundException("Post not found");
             }
 
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
             dslContext.update(table("klog.post"))
-                    .set(field("modify_date"), timestamp)
-                    .set(field("status"), input.getStatus())
-                    .set(field("content"), input.getContent())
-                    .where(field("id").eq(input.getId()))
+                    .set(field("workId"), "")
+                    .where(field("id").eq(input.getPostId()))
                     .execute();
 
             result.put("data", input);
             return result;
+
         } catch (Exception e) {
             if(e instanceof NotFoundException){
                 throw new NotFoundException(e.getMessage());
@@ -70,6 +75,7 @@ public class EditPost implements RequestHandler<Post, Object> {
             DbUtils.closeQuietly(rs);
             DbUtils.closeQuietly(conn);
         }
+
     }
 
 }
