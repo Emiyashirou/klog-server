@@ -53,6 +53,7 @@ public class EditPost implements RequestHandler<Post, Object> {
 
             dslContext.update(table("klog.post"))
                     .set(field("modify_date"), timestamp)
+                    .set(field("title"), input.getTitle())
                     .set(field("status"), input.getStatus())
                     .set(field("content"), input.getContent())
                     .where(field("id").eq(input.getId()))

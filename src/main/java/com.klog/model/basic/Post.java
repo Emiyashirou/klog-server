@@ -6,6 +6,8 @@ public class Post {
 
     private String id;
 
+    private String workId;
+
     private String title;
 
     private Date create_date;
@@ -20,14 +22,23 @@ public class Post {
 
     public Post() {}
 
-    public Post(String id, String title, Date create_date, Date modify_date, int status, int priority, String content) {
+    public Post(String id, String workId, String title, Date create_date, Date modify_date, int status, int priority, String content) {
         this.id = id;
+        this.workId = workId;
         this.title = title;
         this.create_date = create_date;
         this.modify_date = modify_date;
         this.status = status;
         this.priority = priority;
         this.content = content;
+    }
+
+    public String getWorkId() {
+        return workId;
+    }
+
+    public void setWorkId(String workId) {
+        this.workId = workId;
     }
 
     public String getId() {

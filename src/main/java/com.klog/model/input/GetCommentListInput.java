@@ -2,13 +2,13 @@ package com.klog.model.input;
 
 public class GetCommentListInput {
 
-    private int postId;
+    private String postId;
 
-    public int getPostId() {
+    public String getPostId() {
         return postId;
     }
 
-    public void setPostId(int postId) {
+    public void setPostId(String postId) {
         this.postId = postId;
     }
 }

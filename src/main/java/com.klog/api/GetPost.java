@@ -34,6 +34,7 @@ public class GetPost implements RequestHandler<Post, Object> {
 
             rs = dslContext.select(
                     field("id"),
+                    field("workId"),
                     field("title"),
                     field("create_date"),
                     field("modify_date"),
@@ -47,6 +48,7 @@ public class GetPost implements RequestHandler<Post, Object> {
             while (rs.next()) {
                 post = new Post(
                         rs.getString("id"),
+                        rs.getString("workId"),
                         rs.getString("title"),
                         rs.getDate("create_date"),
                         rs.getDate("modify_date"),

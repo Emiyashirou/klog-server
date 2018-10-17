@@ -54,6 +54,7 @@ public class EditWork implements RequestHandler<Work, Object> {
             dslContext.update(table("klog.work"))
                     .set(field("modify_date"), timestamp)
                     .set(field("status"), input.getStatus())
+                    .set(field("priority"), input.getPriority())
                     .set(field("description"), input.getDescription())
                     .where(field("id").eq(input.getId()))
                     .execute();
