@@ -1,11 +1,16 @@
 package com.klog.utils;
 
 import com.klog.model.basic.Post;
+import com.klog.model.input.GetPostListInput;
 
 public class PostUtils {
 
     public static boolean isValidPost(Post post){
         return post != null;
+    }
+
+    public static boolean isValidPostListInput(GetPostListInput input){
+        return input == null || (input.getWorkId() != null && input.getWorkId().length() != 0);
     }
 
     public static boolean isValidPostEdit(Post post){

@@ -6,7 +6,6 @@ import com.klog.exception.BadRequestException;
 import com.klog.exception.InternalServerErrorException;
 import com.klog.exception.NotFoundException;
 import com.klog.model.basic.Comment;
-import com.sun.tools.corba.se.idl.constExpr.Times;
 import org.apache.commons.dbutils.DbUtils;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -58,6 +57,7 @@ public class HideComment implements RequestHandler<Comment, Object> {
                     .set(field("status"), getStatusOfHidden())
                     .where(field("id").eq(input.getId()))
                     .execute();
+            input.setStatus(getStatusOfHidden());
 
             result.put("data", input);
             return result;

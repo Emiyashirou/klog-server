@@ -57,6 +57,7 @@ public class ArchivePost implements RequestHandler<Post, Object> {
                     .set(field("status"), getStatusOfArchive())
                     .where(field("id").eq(input.getId()))
                     .execute();
+            input.setStatus(getStatusOfArchive());
 
             result.put("data", input);
             return result;
