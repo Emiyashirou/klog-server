@@ -55,6 +55,7 @@ public class EditPost implements RequestHandler<Post, Object> {
                     .set(field("modify_date"), timestamp)
                     .set(field("title"), input.getTitle())
                     .set(field("status"), input.getStatus())
+                    .set(field("priority"), input.getPriority())
                     .set(field("content"), input.getContent())
                     .where(field("id").eq(input.getId()))
                     .execute();

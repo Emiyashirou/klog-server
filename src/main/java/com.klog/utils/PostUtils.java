@@ -10,7 +10,10 @@ public class PostUtils {
     }
 
     public static boolean isValidPostListInput(GetPostListInput input){
-        return input == null || (input.getWorkId() != null && input.getWorkId().length() != 0);
+        return input == null
+                || input.getWorkId() == null
+                || input.getWorkId().length() == 0
+                || (input.getWorkId() != null && input.getWorkId().length() != 0);
     }
 
     public static boolean isValidPostEdit(Post post){
