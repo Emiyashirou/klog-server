@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.klog.connection.MySQLConnection.connect;
+import static com.klog.utils.PostUtils.getStatusOfActive;
 import static com.klog.utils.PostUtils.isValidPostListInput;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.table;
@@ -47,7 +48,7 @@ public class GetPostList implements RequestHandler<GetPostListInput, Object> {
             if(input != null && input.getWorkId() != null && input.getWorkId().length() != 0){
                 getPostByWorkId = field("workId").eq(value(input.getWorkId()));
             } else {
-                getPostByWorkId = null;
+                getPostByWorkId = field("status").eq(getStatusOfActive());
             }
 
             rs = dslContext.select(
@@ -60,7 +61,7 @@ public class GetPostList implements RequestHandler<GetPostListInput, Object> {
                     field("priority"),
                     field("content"))
                     .from(table("klog.post"))
-                    .where(field("status").eq(0).and(getPostByWorkId))
+                    .where(field("status").eq(getStatusOfActive()).and(getPostByWorkId))
                     .fetchResultSet();
             List<Post> posts = new ArrayList<>();
             while (rs.next()) {

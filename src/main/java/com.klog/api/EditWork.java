@@ -52,6 +52,7 @@ public class EditWork implements RequestHandler<Work, Object> {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
             dslContext.update(table("klog.work"))
+                    .set(field("title"), input.getTitle())
                     .set(field("modify_date"), timestamp)
                     .set(field("status"), input.getStatus())
                     .set(field("priority"), input.getPriority())

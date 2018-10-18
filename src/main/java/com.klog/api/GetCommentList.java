@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.klog.connection.MySQLConnection.connect;
+import static com.klog.utils.CommentUtils.getStatusOfOpen;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.table;
 
@@ -44,7 +45,7 @@ public class GetCommentList implements RequestHandler<GetCommentListInput, Objec
                     field("ref"),
                     field("content"))
                     .from(table("klog.comment"))
-                    .where(field("status").eq(0).and(field("ref").eq(input.getPostId())))
+                    .where(field("status").eq(getStatusOfOpen()).and(field("ref").eq(input.getPostId())))
                     .fetchResultSet();
             List<Comment> comments = new ArrayList<>();
             while (rs.next()) {
