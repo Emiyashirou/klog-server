@@ -48,7 +48,8 @@ public class AddPost implements RequestHandler<Post, Object> {
                     field("modify_date"),
                     field("status"),
                     field("priority"),
-                    field("content"))
+                    field("content"),
+                    field("workId"))
                     .values(
                             id,
                             input.getTitle(),
@@ -56,7 +57,8 @@ public class AddPost implements RequestHandler<Post, Object> {
                             null,
                             getStatusOfActive(),
                             input.getPriority(),
-                            input.getContent())
+                            input.getContent(),
+                            "NA")
                     .execute();
 
             input.setId(id);
