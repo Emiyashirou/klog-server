@@ -46,7 +46,11 @@ public class GetPostList implements RequestHandler<GetPostListInput, Object> {
 
             Condition getPostByWorkId;
             if(input != null && input.getWorkId() != null && input.getWorkId().length() != 0){
-                getPostByWorkId = field("workId").eq(value(input.getWorkId()));
+                if(input.getWorkId().equals("IW")){
+                    getPostByWorkId = field("workId").notEqual("NA");
+                } else {
+                    getPostByWorkId = field("workId").eq(value(input.getWorkId()));
+                }
             } else {
                 getPostByWorkId = field("status").eq(getStatusOfActive());
             }
