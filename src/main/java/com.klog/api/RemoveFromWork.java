@@ -58,7 +58,7 @@ public class RemoveFromWork implements RequestHandler<RemoveFromWorkInput, Objec
             }
 
             dslContext.update(table("klog.post"))
-                    .set(field("workId"), "")
+                    .set(field("workId"), "NA")
                     .where(field("id").eq(input.getPostId()))
                     .execute();
 
